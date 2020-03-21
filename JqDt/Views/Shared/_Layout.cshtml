@@ -1,12 +1,14 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - 我的 ASP.NET 應用程式</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/DataTables/css/JqDT")
     @Scripts.Render("~/bundles/modernizr")
+
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -38,6 +40,77 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqtable")
     @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        var columns = [
+            { title: 'sid', data: 'sid' },
+            { title: 'sname', data: 'sname' },
+            { title: 'pos', data: 'pos' }];
+
+        //$('#btnQry').click(function() {
+
+        //    //$('#qrytable').dataTable({
+        //    if ($.fn.dataTable.isDataTable('#qrytable')) {
+        //        $('#qrytable').DataTable().destroy();
+        //    }
+
+
+        //    var obja = $('#qrytable').dataTable({
+        //        retrieve: true,
+        //        destroy: true,
+        //        ajax: {
+        //            url: "/Home/GetData",
+        //            type: "POST",
+        //            dataSrc: function (ds) {
+        //                return JSON.parse(ds);
+        //            }
+        //        },
+        //        columns: columns
+
+        //    });
+
+        //});
+
+        $('#btnQry').click(function () {
+            $.ajax({
+                method: "POST",
+                url: "/Home/GetData",
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    console.log('Success' + data);
+
+                    //檢查DataTable是否已建立，沒建立就Destroy
+                    if ($.fn.dataTable.isDataTable('#qrytable')) {
+                        $('#qrytable').DataTable().destroy();
+                    }
+
+                    //destroy 設定 true
+                    $('#qrytable').dataTable({
+                        destroy: true,
+                        columns: [
+                            { title: 'sid', data: 'sid' },
+                            { title: 'sname', data: 'sname' },
+                            { title: 'pos', data: 'pos' }],
+                        data: JSON.parse(data)
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+
+            });
+
+        });
+
+    
+
+
+    </script>
+
 </body>
+
+
 </html>
